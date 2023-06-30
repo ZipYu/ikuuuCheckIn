@@ -3,8 +3,8 @@ const axios = require('axios')
 let key;
 let expire;
 let uidStr;
-let emailStr='davedqaq@outlook.co';
-let password='RZ9.JnK7LWiszZv';
+let emailStr='ur email';
+let password='ur password';
 const loginURL = 'https://ikuuu.eu/auth/login?email='+emailStr+'&passwd='+password;
 const checkinURL= 'https://ikuuu.eu/user/checkin';
 axios.post(loginURL)
