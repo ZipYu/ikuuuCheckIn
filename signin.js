@@ -7,7 +7,7 @@ let emailStr='ur email';
 let password='ur password';
 let domain = 'https://ikuuu.eu';
 const loginURL = domain + '/auth/login?email=' + emailStr + '&passwd=' + password;
-const checkinURL = domain + 'https://ikuuu.eu/user/checkin';
+const checkinURL = domain + '/user/checkin';
 axios.post(loginURL)
   .then(function (response) {
     let array = response.headers['set-cookie'];
