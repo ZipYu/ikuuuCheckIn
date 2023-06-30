@@ -24,9 +24,6 @@ axios.post(loginURL)
       .catch(function (error) {
         console.log("错误信息:" + error);
       })
-
-
-
   })
   .catch(function (error) {
     console.log(error);
