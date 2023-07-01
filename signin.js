@@ -67,26 +67,25 @@ async function signIn(eamil, cookie) {
       .then(function (res) {
         sendMessage.push(eamil + res.data.msg);
         console.log(eamil + res.data.msg);
+        sendMessage.push('-----------------------------------------');
+        msg(sendMessage.join(','));
       })
       .catch(function (error) {
         console.log("错误信息:" + error);
       })
-    // sendMessage.push('-----------------------------------------');
-    msg(sendMessage.join(','));
   })
-
 }
 
 !(async () => {
   const ikuuuUserArray = await getEmailAndPassword();
   const allMessage = [];
-  for await (user of ikuuuUserArray) {
-    const eamil = user.value.split('&')[0];
-    const password = user.value.split('&')[1];
-    console.log('1')
-    const cookieStr = await getCookies(eamil, password);
-    const msg = await signIn(eamil, cookieStr);
-    console.log('2');
+  for (user of ikuuuUserArray) {
+    const eamil = await user.value.split('&')[0];
+    const password = await user.value.split('&')[1];
+    console.log('email:'+eamil+'\npwd:'+password)
+    const cookieStr =await getCookies(eamil, password);
+    const msg =await signIn(eamil, cookieStr);
+    allMessage.push(msg);
   }
-  // await notify.sendNotify(`ikuuu签到`, allMessage.join('\n'))
+  notify.sendNotify(`ikuuu签到`, allMessage.join('\n'))
 })()
