@@ -4,6 +4,7 @@ const notify = require('./sendNotify')
 
 const domain = 'https://ikuuu.eu';
 const checkinURL = domain + '/user/checkin';
+const allMessage = [];
 
 async function getEmailAndPassword() {
 
@@ -36,15 +37,18 @@ async function getEmailAndPassword() {
   return ikuuuUserArray;
 }
 async function getCookies(email, password) {
+  console.log('开始登录:'+email+' '+password)
   return new Promise((cookie) => {
-    const loginURL = domain + '/auth/login?email=' + email + '&passwd=' + password;
+    let loginURL = domain + '/auth/login?email=' + email + '&passwd=' + password;
+    console.log(loginURL);
     axios.post(loginURL)
       .then(function (response) {
-        if (response.data.ret == 0) {
+        if (response.data.ret==undefined||response.data.ret == 0) {
           console.log('登录错误：' + response.data.msg);
-          process.exit(1);
+          return;
         }
-        console.log(email + response.data.msg)
+        console.log(email + response.data.msg);
+        allMessage.push(email + response.data.msg);
         let array = response.headers['set-cookie'];
         let keyArray = array[2].split("; ");
         let expireArray = array[4].split("; ");
@@ -67,7 +71,6 @@ async function signIn(eamil, cookie) {
       .then(function (res) {
         sendMessage.push(eamil + res.data.msg);
         console.log(eamil + res.data.msg);
-        sendMessage.push('-----------------------------------------');
         msg(sendMessage.join(','));
       })
       .catch(function (error) {
@@ -78,7 +81,6 @@ async function signIn(eamil, cookie) {
 
 !(async () => {
   const ikuuuUserArray = await getEmailAndPassword();
-  const allMessage = [];
   for (user of ikuuuUserArray) {
     const eamil = await user.value.split('&')[0];
     const password = await user.value.split('&')[1];
