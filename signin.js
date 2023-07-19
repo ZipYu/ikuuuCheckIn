@@ -11,15 +11,15 @@ async function getEmailAndPassword() {
   let instance = null
   try {
     instance = await initInstance()
-  } catch (e) {}
+  } catch (e) { }
 
   let ikuuu = process.env.ikuuu || []
   try {
     if (instance) ikuuu = await getEnv(instance, 'ikuuu')
-  } catch (e) {}
+  } catch (e) { }
 
   let ikuuuUserArray = [];
-    if (Array.isArray(ikuuu)) ikuuuUserArray = ikuuu
+  if (Array.isArray(ikuuu)) ikuuuUserArray = ikuuu
 
   else if (process.env.ikuuu.indexOf('\n') > -1) {
     console.log(123);
@@ -33,17 +33,17 @@ async function getEmailAndPassword() {
     console.log("没有找到账号");
     process.exit(1);
   }
-      console.log(ikuuuUserArray);
+  console.log(ikuuuUserArray);
   return ikuuuUserArray;
 }
 async function getCookies(email, password) {
-  console.log('开始登录:'+email+' '+password)
+  console.log('开始登录:' + email + ' ' + password)
   return new Promise((cookie) => {
     let loginURL = domain + '/auth/login?email=' + email + '&passwd=' + password;
     console.log(loginURL);
     axios.post(loginURL)
       .then(function (response) {
-        if (response.data.ret==undefined||response.data.ret == 0) {
+        if (response.data.ret == undefined || response.data.ret == 0) {
           console.log('登录错误：' + response.data.msg);
           return;
         }
@@ -84,9 +84,9 @@ async function signIn(eamil, cookie) {
   for (user of ikuuuUserArray) {
     const eamil = await user.value.split('&')[0];
     const password = await user.value.split('&')[1];
-    console.log('email:'+eamil+'\npwd:'+password)
-    const cookieStr =await getCookies(eamil, password);
-    const msg =await signIn(eamil, cookieStr);
+    console.log('email:' + eamil + '\npwd:' + password)
+    const cookieStr = await getCookies(eamil, password);
+    const msg = await signIn(eamil, cookieStr);
     allMessage.push(msg);
   }
   notify.sendNotify(`ikuuu签到`, allMessage.join('\n'))
