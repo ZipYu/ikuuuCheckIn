@@ -2,7 +2,7 @@ const axios = require('axios')
 const { initInstance, getEnv, updateCkEnv } = require('./qlApi.js')
 const notify = require('./sendNotify')
 
-const domain = 'https://ikuuu.eu';
+const domain = 'https://ikuuu.art';
 const checkinURL = domain + '/user/checkin';
 const allMessage = [];
 
