@@ -2,7 +2,7 @@ const axios = require('axios')
 const { initInstance, getEnv, updateCkEnv } = require('./qlApi.js')
 const notify = require('./sendNotify')
 
-const domain = 'https://ikuuu.art';
+const domain = 'https://ikuuu.me';
 const checkinURL = domain + '/user/checkin';
 const allMessage = [];
 
@@ -33,22 +33,22 @@ async function getEmailAndPassword() {
     console.log("没有找到账号");
     process.exit(1);
   }
-  console.log(ikuuuUserArray);
   return ikuuuUserArray;
 }
 async function getCookies(email, password) {
-  console.log('开始登录:' + email + ' ' + password)
+  let emailStr= email.replace(/^(.{0,3}).*@(.*)$/, "$1***@$2");
+  console.log('开始登录:' + emailStr)
   return new Promise((cookie) => {
     let loginURL = domain + '/auth/login?email=' + email + '&passwd=' + password;
-    console.log(loginURL);
+
     axios.post(loginURL)
       .then(function (response) {
         if (response.data.ret == undefined || response.data.ret == 0) {
           console.log('登录错误：' + response.data.msg);
           return;
         }
-        console.log(email + response.data.msg);
-        allMessage.push(email + response.data.msg);
+        console.log(emailStr + response.data.msg);
+        allMessage.push(emailStr + response.data.msg);
         let array = response.headers['set-cookie'];
         let keyArray = array[2].split("; ");
         let expireArray = array[4].split("; ");
@@ -64,13 +64,14 @@ async function getCookies(email, password) {
 }
 
 async function signIn(eamil, cookie) {
+    let emailStr= eamil.replace(/^(.{0,3}).*@(.*)$/, "$1***@$2");
   return new Promise((msg) => {
     const sendMessage = [];
     axios.defaults.headers.common['Cookie'] = cookie;
     axios.post(checkinURL)
       .then(function (res) {
-        sendMessage.push(eamil + res.data.msg);
-        console.log(eamil + res.data.msg);
+        sendMessage.push(emailStr + res.data.msg);
+        console.log(emailStr + res.data.msg);
         msg(sendMessage.join(','));
       })
       .catch(function (error) {
@@ -84,7 +85,6 @@ async function signIn(eamil, cookie) {
   for (user of ikuuuUserArray) {
     const eamil = await user.value.split('&')[0];
     const password = await user.value.split('&')[1];
-    console.log('email:' + eamil + '\npwd:' + password)
     const cookieStr = await getCookies(eamil, password);
     const msg = await signIn(eamil, cookieStr);
     allMessage.push(msg);
